@@ -1,4 +1,7 @@
 import java.util.Scanner;
+//////////////////////////////
+//   COMBINER
+//////////////////////////////
 
 public class Main {
     public static void main(String[] args) {
@@ -7,17 +10,30 @@ public class Main {
         for (int i = 0; i < n; i++) {
             String word1 = inp.next();
             String word2 = inp.next();
-            if((word1.length() >= 1 && word1.length() <= 50) && (word2.length() >= 1 && word2.length() <= 50)){
-                StringBuilder newWord = new StringBuilder(word1 + word2);
+            char[] arr1 = word1.toCharArray();
+            char[] arr2 = word2.toCharArray();
+            int length = Math.min(word1.length(), word2.length());
+            String answer = "";
 
-                for (int t = 1, j = 0, k = 0; j < Math.min(word1.length(), word2.length()); t += 2, j++, k += 2) {
-                    newWord.setCharAt(k, word1.charAt(j));
-                    newWord.setCharAt(t, word2.charAt(j));
-                }
-
-                System.out.println(newWord.toString());
+            for (int t = 0; t < length; t++) {
+                answer += Character.toString(arr1[t]) + Character.toString(arr2[t]);
             }
 
+            if (length < word1.length()){
+                for (int t = length; t < word1.length(); t++){
+                    answer += arr1[t];
+                }
+            }else {
+                for (int t = length; t < word2.length(); t++){
+                    answer += arr2[t];
+                }
+            }
+
+            System.out.println(answer);
         }
     }
 }
+
+// aaaaa
+// bbb
+// abababaa
