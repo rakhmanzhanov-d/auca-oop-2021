@@ -7,29 +7,25 @@ public class Main {
     public static void main(String[] args) {
         Scanner inp = new Scanner(System.in);
         int n = inp.nextInt();
+        inp.nextLine();
         for (int i = 0; i < n; i++) {
             String word1 = inp.next();
             String word2 = inp.next();
-            if (word1.length() > 0 && word1.length() < 1000 && word2.length() > 0 && word2.length() < 1000) {
-                char[] arr1 = word1.toCharArray();
-                char[] arr2 = word2.toCharArray();
-                int lastIdMin = Math.min(word1.length(), word2.length()) - 1;
-                int lastIdMax = Math.max(word1.length(), word2.length()) - 1;
-                char lastDigit1, lastDigit2;
+            int length = Math.min(word1.length(), word2.length());
+            int test = 0;
 
-                if (word1.length() >= word2.length()) {
-                    lastDigit1 = arr1[lastIdMax];
-                    lastDigit2 = arr2[lastIdMin];
-                } else {
-                    lastDigit1 = arr1[lastIdMin];
-                    lastDigit2 = arr2[lastIdMax];
+            if (word1.length() >= word2.length()) {
+                for (int t = 0, k = word1.length() - length; t < length; t++, k++) {
+                    if (word1.charAt(k) == word2.charAt(t)) {
+                        test++;
+                    }
                 }
+            }
 
-                if (lastDigit1 == lastDigit2) {
-                    System.out.println("encaixa");
-                } else {
-                    System.out.println("nao encaixa");
-                }
+            if (test == length) {
+                System.out.println("encaixa");
+            } else {
+                System.out.println("nao encaixa");
             }
         }
     }
