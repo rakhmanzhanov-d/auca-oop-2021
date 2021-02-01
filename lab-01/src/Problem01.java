@@ -20,13 +20,15 @@ public class Problem01 {
     static String userCmd;
     static int numberOfSteps;
 
+    static int numOfLine = 0;
+
     static Scanner inp = new Scanner(System.in);
 
     public static void main(String[] args) {
         try {
             run();
         } catch (RuntimeException e) {
-            System.out.println("Your program has a problem:");
+            System.out.println("Your program has a problem in Line: " + numOfLine);
             System.out.println("\t" + e.getMessage());
         }
     }
@@ -61,6 +63,7 @@ public class Problem01 {
 
     private static void readUserCommand() {
         String line = inp.nextLine().trim();
+        numOfLine++;
         switch (line) {
             case "PenUp":
             case "PenDown":
@@ -72,10 +75,27 @@ public class Problem01 {
                 numberOfSteps = 0;
                 return;
         }
-
         Scanner inpLine = new Scanner(line);
-        userCmd = inpLine.next();
-        numberOfSteps = inpLine.nextInt();
+        if (!inpLine.hasNext()) {
+            throw new RuntimeException("Wrong command: '" + line + "'");
+        }
+        String tmpCmd = inpLine.next();
+        if (!tmpCmd.equals("Move")) {
+            throw new RuntimeException("Unknown command: '" + line + "'");
+        }
+        if (!inpLine.hasNextInt()) {
+            throw new RuntimeException("No integer in command 'Move': '" + line + "'");
+        }
+        int tmpNumberOfSteps = inpLine.nextInt();
+        if(tmpNumberOfSteps < 0){
+            throw new RuntimeException("Negative integer in command 'Move': '" + line + "'");
+        }
+        if(inpLine.hasNext()){
+            throw new RuntimeException("Too many parameters in command 'Move' : '" + line + "'");
+        }
+
+        userCmd = tmpCmd;
+        numberOfSteps = tmpNumberOfSteps;
     }
 
     private static void turnLeft() {
@@ -99,12 +119,6 @@ public class Problem01 {
 
     private static void move(int nSteps) {
         for (int i = 0; i < nSteps; i++) {
-            if (!isInCanvas(turtleRow, turtleCol)) {
-                throw new RuntimeException("Turtle size is outside of canvas : " + turtleRow + ", " + turtleCol);
-            }
-            if (turtlePenDown) {
-                canvas[turtleRow][turtleCol] = '*';
-            }
             switch (turtleDir) {
                 case NORTH:
                     turtleRow--;
@@ -118,6 +132,13 @@ public class Problem01 {
                 case WEST:
                     turtleCol--;
                     break;
+            }
+
+            if (!isInCanvas(turtleRow, turtleCol)) {
+                throw new RuntimeException("Turtle size is outside of canvas : " + turtleRow + ", " + turtleCol);
+            }
+            if (turtlePenDown) {
+                canvas[turtleRow][turtleCol] = '*';
             }
         }
     }
