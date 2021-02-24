@@ -5,10 +5,24 @@ public class Rational extends Object {
         if (denominator == 0) {
             throw new RuntimeException("Rational number equal to zero");
         }
-        this.numerator = numerator;
-        this.denominator = denominator;
+        if (denominator < 0) {
+            denominator = -denominator;
+            numerator = -numerator;
+        }
+
+        int a = Math.abs(numerator);
+        int b = Math.abs(denominator);
+        while (b != 0) {
+            int remainder = a % b;
+            a = b;
+            b = remainder;
+        }
+
+        this.numerator = numerator / a;
+        this.denominator = denominator / a;
     }
 
+    // Overwriting some inherited methods called "POLYMORPHISM" means == many forms
     @Override
     public String toString() {
         return numerator + "/" + denominator;
@@ -18,6 +32,36 @@ public class Rational extends Object {
         int rNum = numerator * other.denominator + denominator * other.numerator;
         int rDen = denominator * other.denominator;
         return new Rational(rNum, rDen);
+    }
+
+    public Rational subtract(Rational other) {
+        int rNum = numerator * other.denominator - denominator * other.numerator;
+        int rDen = denominator * other.denominator;
+        return new Rational(rNum, rDen);
+    }
+
+    public Rational multiply(Rational other) {
+        return new Rational(numerator * other.numerator, denominator * other.denominator);
+    }
+
+    public Rational divide(Rational other) {
+        if (other.numerator == 0) {
+            throw new RuntimeException("Rational : division by zero");
+        }
+        return new Rational(numerator * other.denominator, denominator * other.numerator);
+    }
+
+    public int compareTo(Rational other) {
+        int lhs = numerator * other.denominator;
+        int rhs = denominator * other.numerator;
+//        if (lhs < rhs) {
+//            return -1;
+//        } else if (lhs > rhs) {
+//            return 1;
+//        } else {
+//            return 0;
+//        }
+        return Integer.compare(lhs, rhs);
     }
 }
 
