@@ -1,5 +1,5 @@
 public class Canvas {
-    public static final int SIZE = 40;
+    public static final int SIZE = 20;
     public static int counter = 0;
 
     private char[][] data;
@@ -30,6 +30,10 @@ public class Canvas {
             }
             System.out.println();
         }
+    }
+
+    public boolean isOnCanvas(int row, int col) {
+        return 0 <= row && row < SIZE && 0 <= col && col < SIZE;
     }
 
     public static void main(String[] args) {

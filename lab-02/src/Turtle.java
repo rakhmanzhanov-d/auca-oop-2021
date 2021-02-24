@@ -11,7 +11,8 @@ public class Turtle {
     private int dir;
 
 
-    public Turtle(int aRow, int aCol, boolean penDown, int aDir) {
+    public Turtle(Canvas aCanvas, int aRow, int aCol, boolean penDown, int aDir) {
+        canvas = aCanvas;
         row = aRow;
         col = aCol;
         isPenDown = penDown;
@@ -35,9 +36,7 @@ public class Turtle {
 
     public void penDown() {
         isPenDown = true;
-    }
-    public void isInCanvas(int turtleRow, int turtleCol){
-        return ;
+        canvas.set(row, col);
     }
 
     public void move(int nSteps) {
@@ -57,12 +56,12 @@ public class Turtle {
                     break;
             }
 
-//            if (!isInCanvas(turtleRow, turtleCol)) {
-//                throw new RuntimeException("Turtle size is outside of canvas : " + turtleRow + ", " + turtleCol);
-//            }
-//            if (turtlePenDown) {
-//                canvas[turtleRow][turtleCol] = '*';
-//            }
+            if (!canvas.isOnCanvas(row, col)) {
+                throw new RuntimeException("Turtle size is outside of canvas : " + row + ", " + col);
+            }
+            if (isPenDown) {
+                canvas.set(row, col);
+            }
         }
     }
 }

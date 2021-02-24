@@ -9,7 +9,6 @@ public class UserCommand {
     public static final String MOVE = "Move";
     public static final String PRINT = "Print";
     public static final String EXIT = "Exit";
-    private int numOfSteps;
 
     static int numberOfSteps;
     static int numOfLine = 0;
@@ -54,15 +53,15 @@ public class UserCommand {
 
     //    getter
     public String getCommand() {
-        if(!command.equals(MOVE)){
-            throw new RuntimeException("Error in inserting number of command " + command);
-        }
+//        if(!command.equals(MOVE)){
+//            throw new RuntimeException("Error in inserting number of command " + command);
+//        }
         return command;
     }
 
     //    getter
     public int getNumOfSteps() {
-        return numOfSteps;
+        return numberOfSteps;
     }
 
 }
