@@ -22,6 +22,17 @@ public class Rational extends Object {
         this.denominator = denominator / a;
     }
 
+    public static Rational parse(String s) {
+        s = s.trim();
+        int indexSlash = s.indexOf("/");
+        if (indexSlash == -1) {
+            return new Rational(Integer.parseInt(s), 1);
+        }
+        String n = s.substring(0, indexSlash);
+        String d = s.substring(indexSlash + 1);
+        return new Rational(Integer.parseInt(n), Integer.parseInt(d));
+    }
+
     // Overwriting some inherited methods called "POLYMORPHISM" means == many forms
     @Override
     public String toString() {
