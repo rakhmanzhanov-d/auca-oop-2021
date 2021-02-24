@@ -54,7 +54,6 @@ public class Problem01 {
                 default:
                     System.out.println("Incorrect operation: " + res);
             }
-
         }
     }
 
