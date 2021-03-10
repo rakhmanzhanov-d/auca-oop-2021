@@ -1,21 +1,41 @@
 public class ArrayListInt {
-    private int[] data = new int[0];
+    private static final int DEFAULT_CAPACITY = 10;
+    private int[] data = new int[DEFAULT_CAPACITY];
+    private int size;
 
     void add(int x) {
-        int[] newData = new int[data.length + 1];
-
-        for (int i = 0; i < data.length; i++) {
-            newData[i] = data[i];
+        if (size == data.length) {
+            grow();
         }
-        newData[newData.length - 1] = x;
-        data = newData;
+        data[size] = x;
+        size++;
+    }
+
+    public void rangeCheck(int index) {
+        if (index >= size) {
+            throw new IndexOutOfBoundsException("ArrayListInt: incorrect index: " + index);
+        }
+    }
+
+    public int size(){
+        return size;
+    }
+
+    public void set(int index, int value) {
+        rangeCheck(index);
+        data[index] = value;
+    }
+
+    public int get(int index) {
+        rangeCheck(index);
+        return data[index];
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("[");
 
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (i != 0) {
                 result.append(", ");
             }
@@ -25,5 +45,14 @@ public class ArrayListInt {
         result.append("]");
 
         return result.toString();
+    }
+
+    private void grow() {
+        int newCapacity = data.length + data.length / 2;
+        int[] newData = new int[newCapacity];
+        for (int i = 0; i < data.length; i++) {
+            newData[i] = data[i];
+        }
+        data = newData;
     }
 }
