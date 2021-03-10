@@ -25,6 +25,7 @@ public class Problem02 {
         for (int i = 0; i < arr.size(); i++) {
             if (arr.get(i) % 2 != 0) {
                 arr.remove(arr.get(i));
+                i--;
             }
         }
 
