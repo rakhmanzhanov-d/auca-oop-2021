@@ -20,30 +20,54 @@ public class Main {
 
             String command = strCmd.next();
             int row, col;
+
+            // error handling
+            // error handling
+            // error handling
             switch (command) {
-                case "quit":
+                case "quit" -> {
                     System.out.println("You stopped game");
                     System.exit(0);
-                    break;
-                case "show":
+                }
+                case "show" -> {
                     System.out.println("The game will be mined after first left click");
                     System.out.println();
                     System.out.println(game.show());
-                    break;
-                case "left":
+                }
+                case "left" -> {
                     row = strCmd.nextInt();
                     col = strCmd.nextInt();
+
+                    // error handling
+                    if (row <= 0 || col <= 0 || row > Integer.parseInt(args[0]) || col > Integer.parseInt(args[1])) {
+                        System.out.printf("Invalid row and column inserted (%d, %d)\n", row, col);
+                        System.out.printf("range of raw = [%d, %s]\nrange of column = [%d, %s]\n", 1, args[0], 1, args[1]);
+                    }
+                    if (strCmd.hasNext()) {
+                        System.out.printf("Too many arguments %d %d %s\n", row, col, strCmd.nextLine());
+
+                        break;
+                    }
+
                     game.left(row, col);
                     System.out.println(game);
                     if (!game.chekValidness()) {
+                        System.out.println(game);
                         System.out.println("GAME OVER");
                         System.out.println("I believe you can do it next time, Keep trying");
                         System.exit(0);
                     }
-                    break;
-                case "right":
+                }
+                case "right" -> {
                     row = strCmd.nextInt();
                     col = strCmd.nextInt();
+
+                    // error handling
+                    if (row <= 0 || col <= 0 || row > Integer.parseInt(args[0]) || col > Integer.parseInt(args[1])) {
+                        System.out.printf("Invalid row and column inserted (%d, %d)\n", row, col);
+                        System.out.printf("range of raw = [%d, %s]\nrange of column = [%d, %s]\n", 1, args[0], 1, args[1]);
+                    }
+
                     game.right(row, col);
                     System.out.println(game);
                     if (game.wonGame()) {
@@ -51,7 +75,10 @@ public class Main {
                         System.out.println("YOOOOHOOOOOO");
                         System.exit(1);
                     }
-                    break;
+                }
+                default -> {
+                    System.out.println("Please insert correct command\nCommand not found: " + command);
+                }
             }
         }
     }
