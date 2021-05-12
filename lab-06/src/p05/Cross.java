@@ -16,11 +16,19 @@ public class Cross extends Figure {
         vRect = new Rect(x - s2 / 2, y - s1 / 2, s2, s1);
     }
 
+
     @Override
     public void move(int dx, int dy) {
         super.move(dx, dy);
         hRect.move(dx, dy);
         vRect.move(dx, dy);
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        hRect.setSelected(selected);
+        vRect.setSelected(selected);
     }
 
     @Override

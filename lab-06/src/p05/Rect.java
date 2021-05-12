@@ -15,7 +15,6 @@ public class Rect extends Figure {
         if (h < 0) {
             throw new IllegalArgumentException("Rectangle's Height < 0!?");
         }
-
         this.w = w;
         this.h = h;
 
@@ -30,6 +29,10 @@ public class Rect extends Figure {
     public void draw(Graphics g) {
         g.setColor(Color.BLUE);
         g.fillRect(x, y, w, h);
+        if (isSelected()) {
+            g.setColor(Color.RED);
+            g.drawRect(x, y, w, h);
+        }
     }
 
     @Override
