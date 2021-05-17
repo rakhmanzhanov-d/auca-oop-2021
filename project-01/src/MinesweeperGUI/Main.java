@@ -1,5 +1,4 @@
 package MinesweeperGUI;
-
 import processing.core.*;
 
 import javax.swing.*;
@@ -14,7 +13,8 @@ public class Main extends PApplet {
     protected int[][] mines;
     protected boolean[][] reveals;
     protected boolean[][] flags;
-    private boolean firstClick;
+    public boolean firstClick;
+    protected PImage flag;
 
     public void settings() {
         fullScreen();
@@ -26,63 +26,10 @@ public class Main extends PApplet {
         col = 9;
         numMines = 10;
         firstClick = true;
+        flag = loadImage("flag.jpg");
 
-
-        // 2. Initialize data
-        data = new Data(row, col, numMines, this);
-        mines = data.getMinesData();
-        reveals = data.getRevealsData();
-        flags = data.getFlagsData();
-
-
-        // 3. Add cmd buttons
-        cmdButtons.add(new CmdButton(8 * (width / 10f), 4 * (height / 10f), width / 10f, height / 12f, "easy", this, () -> {
-            row = 9;
-            col = 9;
-            numMines = 10;
-            JOptionPane.showMessageDialog(null, "easy");
-            System.out.println("Hello");
-        }));
-        cmdButtons.add(new CmdButton(8 * (width / 10f), 5 * (height / 10f), width / 10f, height / 12f, "medium", this, () -> {
-            row = 16;
-            col = 16;
-            numMines = 40;
-        }));
-        cmdButtons.add(new CmdButton(8 * (width / 10f), 6 * (height / 10f), width / 10f, height / 12f, "expert", this, () -> {
-            row = 30;
-            col = 30;
-            numMines = 99;
-        }));
-
-
-        for (int r = 0; r < row; r++) {
-            for (int c = 0; c < col; c++) {
-                System.out.println("Added");
-                int finalR = r;
-                int finalC = c;
-                buttons.add(new ButtonCell(row, col, r, c, this, () -> {
-                    // 1 Start GAME if it is first click
-                    if (firstClick) {
-                        firstClick = false;
-                        do {
-                            data.clearMines();
-                            data.placeMines();
-                        } while (data.calcNear(finalR, finalC) != 0);
-                    }
-
-
-                    JOptionPane.showMessageDialog(null, Arrays.deepToString(mines));
-                    if (mouseButton == LEFT) {
-                        // 1. reveal current grid cell
-                        reveals[finalR][finalC] = true;
-
-                    } else if (mouseButton == RIGHT) {
-                        // 1. put flag on current cell
-                        flags[finalR][finalC] = !flags[finalR][finalC];
-                    }
-                }));
-            }
-        }
+        // 2. Initialize game
+        initGame(row, col, numMines);
     }
 
     public void draw() {
@@ -95,6 +42,7 @@ public class Main extends PApplet {
         for (ButtonCell btn : buttons) {
             btn.draw();
         }
+
     }
 
     @Override
@@ -104,10 +52,94 @@ public class Main extends PApplet {
                 btn.performAction();
             }
         }
+
+        for (CmdButton btn : cmdButtons) {
+            if (btn.contains(mouseX, mouseY)) {
+                btn.performAction();
+            }
+        }
+    }
+
+    public void initGame(int row, int col, int numMines) {
+        // init values
+        firstClick = true;
+        this.row = row;
+        this.col = col;
+        this.numMines = numMines;
+        data = new Data(row, col, numMines, this);
+        mines = data.getMinesData();
+        reveals = data.getRevealsData();
+        flags = data.getFlagsData();
+
+
+        // clear and add cmd buttons
+        cmdButtons = new ArrayList<>();
+        cmdButtons.add(new CmdButton(width / 2f + row * 30 / 2f, height / 2f - 100, width / 10f, height / 16f, "easy", this, () -> {
+            this.row = 9;
+            this.col = 9;
+            this.numMines = 10;
+            initGame(this.row, this.col, this.numMines);
+            System.out.println("RESTART EASY");
+            firstClick = true;
+
+        }));
+        cmdButtons.add(new CmdButton(width / 2f + row * 30 / 2f, height / 2f, width / 10f, height / 16f, "medium", this, () -> {
+            this.row = 16;
+            this.col = 16;
+            this.numMines = 40;
+            initGame(this.row, this.col, this.numMines);
+            System.out.println("RESTART MEDIUM");
+            firstClick = true;
+        }));
+        cmdButtons.add(new CmdButton(width / 2f + row * 30 / 2f, height / 2f + 100, width / 10f, height / 16f, "expert", this, () -> {
+            this.row = 30;
+            this.col = 30;
+            this.numMines = 99;
+            initGame(this.row, this.col, this.numMines);
+            System.out.println("RESTART EXPERT");
+            firstClick = true;
+        }));
+
+
+        // clear and add buttons to grid
+        buttons = new ArrayList<>();
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                System.out.println("Added");
+                int finalR = r;
+                int finalC = c;
+                buttons.add(new ButtonCell(flag, this.row, this.col, r, c, this, () -> {
+                    if (mouseButton == RIGHT) {
+                        if (reveals[finalR][finalC]) return; // do nothing current cell is revealed
+
+                        // 1. put flag on current cell
+                        flags[finalR][finalC] = !flags[finalR][finalC];
+
+                    } else if (mouseButton == LEFT) {
+                        if (flags[finalR][finalC]) return; // do nothing if cur cell is FLAG
+
+                        if (firstClick) {
+                            firstClick = false;
+                            do {
+                                data.clearMines();
+                                data.placeMines();
+                            } while (data.calcNear(finalR, finalC) != 0);
+                            JOptionPane.showMessageDialog(null, Arrays.deepToString(this.mines));
+                        }
+
+                        if (mines[finalR][finalC] > 0) {
+                            JOptionPane.showMessageDialog(null, "GameOver");
+//                            exit();
+                        } else {
+                            data.reveal(finalR, finalC);
+                        }
+                    }
+                }));
+            }
+        }
     }
 
     public static void main(String[] args) {
         PApplet.main("MinesweeperGUI.Main");
     }
-
 }

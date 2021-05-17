@@ -1,5 +1,4 @@
 package MinesweeperGUI;
-
 public class CmdButton {
     protected float x, y, w, h;
     protected String difficulty;

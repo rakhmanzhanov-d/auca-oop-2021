@@ -17,8 +17,8 @@ public class Data {
         this.mines = new int[row][col];
         this.flags = new boolean[row][col];
         this.reveals = new boolean[row][col];
-        this.dr = new int[]{-1, -1, 0, 1, 1, 1, 0, -1};
-        this.dc = new int[]{0, 1, 1, 1, 0, -1, -1, -1};
+        this.dr = new int[]{-1, -1, 1, 1, -1, 1, 0, 0};
+        this.dc = new int[]{-1, 1, -1, 1, 0, 0, -1, 1};
         this.firstClick = true;
 
         // init data values
@@ -43,14 +43,13 @@ public class Data {
         return flags;
     }
 
-    private int calcNeighbour(int r, int c) {
+    public int calcNeighbour(int r, int c) {
         if (outBounds(r, c)) return 0;
         int cnt = 0;
-        for (int neighbour = 0; neighbour < dr.length; neighbour++) {
-            int tr = r + dr[neighbour];
-            int tc = c + dc[neighbour];
-            if (0 <= tr && tr < row && 0 <= tc && tc < col && mines[tr][tc] == -1) {
-                cnt++;
+        for (int i = 0; i < dr.length; i++) {
+            for (int j = 0; j < dc.length; j++) {
+                if (outBounds(r + dr[i], c + dc[j])) continue;
+                cnt += mines[dr[i] + r][dc[j] + c];
             }
         }
         return cnt;
@@ -81,29 +80,29 @@ public class Data {
         }
     }
 
-    private void reveal(int r, int c) {
+    public void reveal(int r, int c) {
         if (outBounds(r, c)) return;
         if (reveals[r][c]) return;
         reveals[r][c] = true;
-        if (calcNeighbour(r, c) != 0) return;
+        if (calcNear(r, c) != 0) return;
         for (int neighbour = 0; neighbour < dr.length; neighbour++) {
             reveal(r + dr[neighbour], c + dc[neighbour]);
         }
     }
 
-    public void revealCurElement(int r, int c) {
-        reveals[r][c] = true;
-    }
-
     public int calcNear(int r, int c) {
         if (outBounds(r, c)) return 0;
         int cnt = 0;
-        for (int i = 0; i < dr.length; i++) {
-            for (int j = 0; j < dc.length; j++) {
-                if (outBounds(r + i, c + j)) continue;
-                cnt += mines[r + i][c + j];
+        for (int neighbourR = -1; neighbourR <= 1; neighbourR++) {
+            for (int neighbourC = -1; neighbourC <= 1; neighbourC++) {
+                if (outBounds(neighbourR + r, neighbourC + c)) continue;
+                cnt += mines[neighbourR + r][neighbourC + c];
             }
         }
         return cnt;
+    }
+
+    public int getCurValue(int r, int c) {
+        return calcNear(r, c);
     }
 }
