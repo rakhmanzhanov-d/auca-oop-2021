@@ -19,7 +19,6 @@ public class Main extends PApplet {
         buttons.add(new CommandButton(this, 100, 100, 200, 100, "Exit", () -> System.exit(0)));
         buttons.add(new CommandButton(this, 700, 100, 200, 100, "Change Background", () -> backgroundColor = random(255)));
         buttons.add(new ProcessingButton(this, 500, 500, 200, 300, () -> JOptionPane.showMessageDialog(null, "Hey Bro, It is working")));
-
     }
 
     public void draw() {

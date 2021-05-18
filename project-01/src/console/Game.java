@@ -105,8 +105,6 @@ public class Game {
         } else if (data[row - 1][col - 1] == '*') {
             isValid = false;
             curData[row - 1][col - 1] = '*';
-        } else if (data[row - 1][col - 1] == '0') {
-            curData[row - 1][col - 1] = '.';
         } else {
             curData[row - 1][col - 1] = data[row - 1][col - 1];
         }

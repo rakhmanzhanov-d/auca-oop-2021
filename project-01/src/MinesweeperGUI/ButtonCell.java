@@ -21,8 +21,8 @@ public class ButtonCell {
         this.action = action;
         this.w = 25;
         this.h = 25;
-        this.x = r * w + main.width / 3f;
-        this.y = c * h + main.height / 3f;
+        this.x = (main.width / 2f - row * w / 2f) + r * w;
+        this.y = (main.height / 2f - col * h / 2f) + c * h;
         this.imgFlag = imgFlag;
     }
 
@@ -59,6 +59,7 @@ public class ButtonCell {
             main.fill(0);
             main.image(imgFlag, x, y, w, h);
         }
+
     }
 
     public void performAction() {
