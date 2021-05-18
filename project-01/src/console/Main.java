@@ -3,121 +3,147 @@ package console;
 import java.util.Scanner;
 
 public class Main {
+    private static Data data;
+    protected static int[][] mines;
+    protected static boolean[][] reveals;
+    protected static boolean[][] flags;
+    public static boolean firstClick;
+    protected static int row, col, numMines, numFlags, curState, minesLeft;
+
+    public Main() {
+        firstClick = true;
+        curState = 0;
+    }
+
     public static void main(String[] args) {
-        Game game = null;
-
         Scanner inp = new Scanner(System.in);
-        game = parseArguments(args, usage());
 
-        // starter minesweeper
-        System.out.println(game);
+        // 1. init game
+        data = parseArguments(args);
+        mines = data.getMinesData();
+        flags = data.getFlagsData();
+        reveals = data.getRevealsData();
+        curState = 0;
+        firstClick = true;
 
-        // reading input commands
+
+        // showing starter data
+        System.out.println(String.format("Game (row: %d,  col: %d,  mines: %d)", row, col, numMines));
+        System.out.println(data);
+
         while (true) {
             System.out.print("Command: ");
             String cmd = inp.nextLine();
             Scanner strCmd = new Scanner(cmd);
 
             String command = strCmd.next();
-            int row, col;
 
-            // error handling
-            // error handling
-            // error handling
             switch (command) {
                 case "quit" -> {
                     System.out.println("You stopped game");
                     System.exit(0);
                 }
                 case "show" -> {
-                    System.out.println("The game will be mined after first left click");
+                    System.out.println("Game starts after first left click");
                     System.out.println();
-                    System.out.println(game.show());
+                    System.out.println(data);
                 }
                 case "left" -> {
-                    row = strCmd.nextInt();
-                    col = strCmd.nextInt();
+                    int r = strCmd.nextInt() - 1;
+                    int c = strCmd.nextInt() - 1;
+                    if (flags[r][c]) break; // do nothing if it is flag
 
-                    // error handling
-                    if (row <= 0 || col <= 0 || row > Integer.parseInt(args[0]) || col > Integer.parseInt(args[1])) {
-                        System.out.printf("Invalid row and column inserted (%d, %d)\n", row, col);
-                        System.out.printf("range of raw = [%d, %s]\nrange of column = [%d, %s]\n", 1, args[0], 1, args[1]);
-                    }
                     if (strCmd.hasNext()) {
                         System.out.printf("Too many arguments %d %d %s\n", row, col, strCmd.nextLine());
 
                         break;
                     }
+                    if (firstClick) {
+                        firstClick = false;
 
-                    game.left(row, col);
-                    System.out.println(game);
-                    if (!game.chekValidness()) {
-                        System.out.println(game);
-                        System.out.println("GAME OVER");
-                        System.out.println("I believe you can do it next time, Keep trying");
+                        do {
+                            data.clearMines();
+                            data.placeMines();
+                        } while (data.calcNear(r, c) > 0);
+
+                    }
+
+                    if (mines[r][c] > 0) {
+                        System.out.println("Game over");
+                        System.out.println(data.show());
                         System.exit(0);
+                    } else {
+                        data.reveal(r, c);
+                        if (minesLeft == 0) {
+                            System.out.println("CONGRATULATIONS!!! YOU WON GAME");
+                        }
                     }
                 }
                 case "right" -> {
-                    row = strCmd.nextInt();
-                    col = strCmd.nextInt();
+                    int r = strCmd.nextInt() - 1;
+                    int c = strCmd.nextInt() - 1;
 
-                    // error handling
-                    if (row <= 0 || col <= 0 || row > Integer.parseInt(args[0]) || col > Integer.parseInt(args[1])) {
-                        System.out.printf("Invalid row and column inserted (%d, %d)\n", row, col);
-                        System.out.printf("range of raw = [%d, %s]\nrange of column = [%d, %s]\n", 1, args[0], 1, args[1]);
+                    if (reveals[r][c]) break; // do nothing if it is revealed
+
+                    flags[r][c] = !flags[r][c];
+
+                    if (flags[r][c] && mines[r][c] != 0) {
+                        numFlags++;
+                        minesLeft--;
+                        if (numFlags == numMines) {
+                            System.out.println(data);
+                            System.out.println("CONGRATULATIONS!!! YOU WON GAME");
+                            System.exit(1);
+                        }
+                    } else if (!flags[r][c] && mines[r][c] != 0) {
+                        minesLeft++;
                     }
 
-                    game.right(row, col);
-                    System.out.println(game);
-                    if (game.wonGame()) {
-                        System.out.println("CONGRATULATIONS YOU WON!!!!!");
-                        System.out.println("YOOOOHOOOOOO");
-                        System.exit(1);
-                    }
-                }
-                default -> {
-                    System.out.println("Please insert correct command\nCommand not found: " + command);
+                    System.out.println(data);
                 }
             }
         }
     }
 
-    public static String usage() {
+    private static Data parseArguments(String[] args) {
 
-        String usg = "-java -jar Minesweeper.jar beginner\n" +
-                "      - game in the beginner mode row=9, col=9, mines=10\n" +
-                "-java -jar Minesweeper.jar medium\n" +
-                "      - game in the medium mode row=16, col=16, mines=40\n" +
-                "-java -jar Minesweeper.jar expert\n" +
-                "      - game in the expert mode row=30, col=16, mines=99\n";
-        return usg;
-    }
-
-    private static Game parseArguments(String[] args, String usage) {
-        int row = 9, col = 9, mines = 10;
-
+        // User chooses manually the number of mines, rows and cols
         if (args.length == 3) {
             row = Integer.parseInt(args[0]);
             col = Integer.parseInt(args[1]);
-            mines = Integer.parseInt(args[2]);
+            numMines = Integer.parseInt(args[2]);
+            minesLeft = numMines;
 
-            if (mines >= row * col) {
+            // Error handling
+            if (numMines >= row * col) {
                 System.out.println("Incorrect mode mines >= row * col");
-                System.out.println(usage);
+                System.out.println(usage());
                 System.exit(0);
             }
-            return new Game(row, col, mines, "CUSTOM");
+
+            return new Data(row, col, numMines);
         } else if (args.length == 1) {
             String level = args[0];
             if (level.equals("beginner")) {
-                return new Game(9, 9, 10, "BEGINNER");
+                row = 9;
+                col = 9;
+                numMines = 10;
+                minesLeft = numMines;
+                return new Data(row, col, numMines);
             } else if (level.equals("medium")) {
-                return new Game(16, 16, 40, "MEDIUM");
+                row = 16;
+                col = 16;
+                minesLeft = numMines;
+                numMines = 40;
+                return new Data(row, col, numMines);
             } else if (level.equals("expert")) {
-                return new Game(30, 16, 99, "EXPERT");
+                row = 30;
+                col = 16;
+                minesLeft = numMines;
+                numMines = 99;
+                return new Data(row, col, numMines);
             } else {
-                System.out.println(usage);
+                System.out.println(usage());
                 System.exit(0);
             }
         } else {
@@ -129,9 +155,20 @@ public class Main {
                 }
             }
             System.out.println();
-            System.out.println(usage);
+            System.out.println(usage());
             System.exit(0);
         }
-        return new Game(0, 0, 0, "");
+        return null;
+    }
+
+    public static String usage() {
+
+        String usg = "-java -jar Minesweeper.jar beginner\n" +
+                "      - game in the beginner mode row=9, col=9, mines=10\n" +
+                "-java -jar Minesweeper.jar medium\n" +
+                "      - game in the medium mode row=16, col=16, mines=40\n" +
+                "-java -jar Minesweeper.jar expert\n" +
+                "      - game in the expert mode row=30, col=16, mines=99\n";
+        return usg;
     }
 }
