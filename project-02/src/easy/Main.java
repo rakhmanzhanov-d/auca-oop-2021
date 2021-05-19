@@ -54,7 +54,6 @@ public class Main extends JFrame {
         nextLevel.addActionListener((e) -> {
             cnt = 0;
             game.nextLevel();
-            curLevel.setText(Integer.toString(game.getCurLevel()));
             repaint();
         });
 
@@ -68,8 +67,8 @@ public class Main extends JFrame {
         // add command buttons
         curLevel.setOpaque(true);
         counter.setOpaque(true);
-        curLevel.setFont(new Font("Serif", Font.PLAIN, 50));
-        counter.setFont(new Font("Serif", Font.PLAIN, 50));
+        curLevel.setFont(new Font("Serif", Font.PLAIN, 30));
+        counter.setFont(new Font("Serif", Font.PLAIN, 30));
         curLevel.setHorizontalAlignment(SwingConstants.CENTER);
         counter.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -80,8 +79,8 @@ public class Main extends JFrame {
         commandPanel.add(nextLevel, BorderLayout.NORTH);
         add(commandPanel, BorderLayout.EAST);
         commandPanel.setLayout(new GridLayout(0, 1));
-        curLevel.setText(Integer.toString(game.getCurLevel()));
-        counter.setText(Integer.toString(cnt));
+//        curLevel.setText(Integer.toString(game.getCurLevel()));
+//        counter.setText(Integer.toString(cnt));
 
         setTitle("YEAAAH");
         setSize(800, 800);
@@ -148,19 +147,19 @@ public class Main extends JFrame {
                 JOptionPane.showMessageDialog(null, "Move your robot");
             } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                 game.maze.move(-1, 0);
+                if (game.maze.isMoved) cnt++;
             } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 game.maze.move(1, 0);
-                cnt++;
+                if (game.maze.isMoved) cnt++;
             } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                 game.maze.move(0, -1);
-                cnt++;
+                if (game.maze.isMoved) cnt++;
             } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 game.maze.move(0, 1);
-                cnt++;
+                if (game.maze.isMoved) cnt++;
             }
             repaint();
             System.out.println(game.maze.getBoxRedList());
-            System.out.println(game.maze.getRobotRow() + " row and " + game.maze.getRobotCol() + " cols");
             if (game.maze.isWin()) {
                 JOptionPane.showMessageDialog(Main.this, String.format("Maze %d solved", game.getCurLevel()));
                 game.nextLevel();
@@ -169,8 +168,8 @@ public class Main extends JFrame {
             }
 
 
-            curLevel.setText(Integer.toString(game.getCurLevel()));
-            counter.setText(Integer.toString(cnt));
+            curLevel.setText("level: " + Integer.toString(game.getCurLevel()));
+            counter.setText("CNT: " + Integer.toString(cnt));
         }
     }
 }

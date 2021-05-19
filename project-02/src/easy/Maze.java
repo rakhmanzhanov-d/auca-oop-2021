@@ -7,11 +7,13 @@ public class Maze {
     private int robotRow, robotCol, width, height;
     private ArrayList<Paired> boxGoalList = new ArrayList<>();
     private ArrayList<Paired> boxRedList = new ArrayList<>();
+    protected boolean isMoved;
 
     public Maze(char[][] level) {
         this.height = level.length;
         this.width = level[0].length;
         this.data = level;
+        this.isMoved = false;
 
         for (int r = 0; r < height; r++) {
             for (int c = 0; c < width; c++) {
@@ -67,6 +69,7 @@ public class Maze {
             data[robotRow][robotCol] = ' ';
             robotRow = tRow;
             robotCol = tCol;
+            isMoved = true;
         } else if (data[tRow][tCol] == '$') {
             int breakRow = tRow + dr;
             int breakCol = tCol + dc;
@@ -75,12 +78,15 @@ public class Maze {
                 data[robotRow][robotCol] = ' ';
                 robotRow = tRow;
                 robotCol = tCol;
+                isMoved = true;
 
                 Paired newRedArr = new Paired(breakRow, breakCol);
                 boxRedList.removeIf(el -> el.row == robotRow && el.col == robotCol);
                 boxRedList.add(newRedArr);
                 data[breakRow][breakCol] = '$';
             }
+        } else {
+            isMoved = false;
         }
     }
 

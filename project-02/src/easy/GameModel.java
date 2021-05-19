@@ -97,8 +97,8 @@ public class GameModel {
 
     public void prevLevel() {
         curLevel--;
-        if (curLevel == 0) {
-            curLevel = 40;
+        if (curLevel < 0) {
+            curLevel = 39;
         }
 
         maze = new Maze(levels[curLevel]);
